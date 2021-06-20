@@ -1,0 +1,63 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
+public class Main {
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int maxNumber = 0;
+		int position = 0;
+		
+		for(int i = 0; i<9; i++) {
+			int nowNum = Integer.parseInt(br.readLine());
+			if(nowNum>maxNumber) {
+				maxNumber = nowNum;
+				position = i+1;
+			}
+		}
+		br.close();
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		bw.write(maxNumber+"\n"+position);
+		bw.flush();
+		bw.close();
+	}
+}
+
+위와 같이 코드를 작성하였다.  문제는 간단했으나 다른사람들의 코딩을 보다 의문점이 생겼다
+
+import java.util.*;
+import java.io.*;
+
+//백준 2562번 : 최댓값
+public class Main{
+	public static void main(String args[]) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		int result=0; 
+		int num=0;
+		int[] arr = new int[9];
+		for(int i=0; i<9; i++) {
+			arr[i]= Integer.parseInt(br.readLine());
+		}
+		
+		for(int i=0; i<9; i++) {
+			
+			if(arr[i]>result) {
+				result = arr[i];
+				num=i+1;
+			}
+			
+		}
+		System.out.println(result);
+		System.out.println(num);
+		
+	}
+}
+
+이러한 방식으로 코드를 작성하였는데 2중for문을 돌리고 그안에서 if문을 실행하는 방식에다 변수를 할당을 많이 하였다 
+그런데 이러한 코드 방식이 내가 작성한 코드 보다 훨씬 빨랐다 이유가 궁굼하다.
+
+질문게시판에 글을 작성하여 이유를 물었다 추후에 알게된다면 추가하겠습니다.
