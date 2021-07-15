@@ -1,0 +1,95 @@
+/*
+문제
+두 정수 A와 B를 입력받은 다음, A+B를 출력하는 프로그램을 작성하시오.
+
+입력
+첫째 줄에 A와 B가 주어진다. (0 < A,B < 1010000)
+
+출력
+첫째 줄에 A+B를 출력한다.
+*/
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		StringBuilder sb = new StringBuilder();
+		String a = new StringBuilder(st.nextToken()).reverse().toString();
+		String b = new StringBuilder(st.nextToken()).reverse().toString();
+		int loopCountB;
+		int loopCountS;
+		int sum;
+		boolean carry = false;
+		if(a.length()>b.length()) {//a의 길이가 더 길때
+			loopCountB = a.length();
+			loopCountS = b.length();
+		}else if(b.length()>a.length()) {//b의 길가 길때
+			loopCountB = b.length();
+			loopCountS = a.length();
+		}else {//a b의 길이가 같을대
+			loopCountB = a.length();
+			loopCountS = loopCountB;
+		}
+		
+		for(int i = 0; i<loopCountS; i++) {
+			sum = (a.charAt(i)-'0')+(b.charAt(i)-'0');
+			if(carry) {
+				sum++;
+				carry = false;
+			}
+			if(sum>9) {
+				sb.append(sum%10);
+				carry = true;
+			}else {
+				sb.append(sum);
+			}
+		}
+		if(loopCountB>loopCountS) {
+			for(int j = loopCountS; j<loopCountB; j++) {
+				if(loopCountB==a.length()) {
+					sum = a.charAt(j)-'0';
+					if(carry) {
+						sum++;
+						carry = false;
+					}
+					if(sum>9) {
+						sb.append(sum%10);
+						carry = true;
+					}else {
+						sb.append(sum);
+					}
+				}else {
+					sum = b.charAt(j)-'0';
+					if(carry) {
+						sum++;
+						carry = false;
+					}
+					if(sum>9) {
+						sb.append(sum%10);
+						carry = true;
+					}else {
+						sb.append(sum);
+					}
+				}
+			}
+		}
+		if(carry) {
+			sb.append('1');
+		}
+		System.out.println(sb.reverse().toString());
+		
+	}
+}
+
+/*
+위와 같은 방식으로 풀었습니다. 
+A와 B의 길이를 찾아서 둘중 큰것을 loopCountB에 작은것을 loopCountS에 대입하고
+처음 for문에서 0번 인덱스 부터 loopCountS-1번 인덱스 까지 a와b 발생한 carry를 더하고 StringBuilder sb에 append시켰습니다.
+두번째 for문에서 loopCountS번 인덱스 의 a와b중 길이가 더큰 수를 carry와 더하였습니다. 마지막에는 carry가 true이면 1을 입력시켜주고 reverse시켰습니다.
+*/
