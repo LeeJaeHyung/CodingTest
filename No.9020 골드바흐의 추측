@@ -1,0 +1,142 @@
+/*
+문제
+1보다 큰 자연수 중에서  1과 자기 자신을 제외한 약수가 없는 자연수를 소수라고 한다. 예를 들어, 5는 1과 5를 제외한 약수가 없기 때문에 소수이다. 하지만, 6은 6 = 2 × 3 이기 때문에 소수가 아니다.
+
+골드바흐의 추측은 유명한 정수론의 미해결 문제로, 2보다 큰 모든 짝수는 두 소수의 합으로 나타낼 수 있다는 것이다. 이러한 수를 골드바흐 수라고 한다. 또, 짝수를 두 소수의 합으로 나타내는 표현을 그 수의 골드바흐 파티션이라고 한다. 예를 들면, 4 = 2 + 2, 6 = 3 + 3, 8 = 3 + 5, 10 = 5 + 5, 12 = 5 + 7, 14 = 3 + 11, 14 = 7 + 7이다. 10000보다 작거나 같은 모든 짝수 n에 대한 골드바흐 파티션은 존재한다.
+
+2보다 큰 짝수 n이 주어졌을 때, n의 골드바흐 파티션을 출력하는 프로그램을 작성하시오. 만약 가능한 n의 골드바흐 파티션이 여러 가지인 경우에는 두 소수의 차이가 가장 작은 것을 출력한다.
+
+입력
+첫째 줄에 테스트 케이스의 개수 T가 주어진다. 각 테스트 케이스는 한 줄로 이루어져 있고 짝수 n이 주어진다.
+
+출력
+각 테스트 케이스에 대해서 주어진 n의 골드바흐 파티션을 출력한다. 출력하는 소수는 작은 것부터 먼저 출력하며, 공백으로 구분한다.
+*/
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class Main {
+	static boolean[] prime;
+	
+	public static void main(String[] args) throws Exception{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
+		int t = Integer.parseInt(br.readLine());
+		int[] num = new int[t];
+		int maxNum = 0;
+		for(int i = 0; i<t; i++) {
+			num[i] = Integer.parseInt(br.readLine());
+			if(maxNum<num[i]) {
+				maxNum = num[i];
+			}
+		}
+		getPrime(maxNum);
+		for(int j = 0; j<t; j++) {
+			int loopStart = num[j]/2;
+			for(int k = loopStart; k>=2; k--) {
+				if(!prime[k]&&!prime[num[j]-k]) {
+					sb.append(k+" "+(num[j]-k)+"\n");
+					break;
+				}
+			}
+		}
+		System.out.println(sb);
+	}
+	
+	public static void getPrime(int maxNum) {//에라토스 테네스의 체를 이용하여 구함
+		prime = new boolean[maxNum+1];//초기값 false 따라서 소수는 false;
+		prime[0] = prime[1] = true;
+		for(int i = 2; i<Math.sqrt(maxNum); i++) {
+			if(!prime[i]) {				
+				for(int j = i+i; j<maxNum; j+=i) {
+					prime[j] = true;
+				}
+			}
+		}
+	}
+}
+
+/*
+최종 제출하게 된 코드는 위와같습니다.
+아래의 코드는 처음 생각한 방식을 코드로 옮긴 코드였습니다.
+하지만 시간이 많이 소요 되었습니다.
+풀이 방식은 입력값들을 받고 그중에 제일 큰수를 골라내어 제일큰 수만큼 에라토스 테네스의 체를 이용하여 
+소수들을 걸러내고 소수들 갯수를 카운트를 세고 그카운트 만큼의 공간을 할당하였습니다.
+공간을 할당하여 해당 수의 소수 범위를 모두 집어넣고 중간부터 수를 찾아 나갔습니다.
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
+public class Main {
+	
+	static boolean[] eratos;
+	
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int t = Integer.parseInt(br.readLine());
+		int[] input = new int[t];
+		int mNum = 0;
+		for(int i = 0; i<t; i++) {
+			input[i] = Integer.parseInt(br.readLine());
+			if(input[i]>mNum) {
+				mNum = input[i];
+			}
+		}
+		eratos(mNum);
+		goldbach(input);
+	}
+	
+	public static void eratos(int mNum) {
+		eratos = new boolean[mNum+1];// false 소수 
+		eratos[1] = eratos[0] = true; //1은 소수가 아님
+		double loopSize = Math.sqrt(mNum);
+		for(int i = 2; i<=loopSize; i++) {
+			if(!eratos[i]) {//소수일때만 해당수의 배수를 true로 바꿈
+				for(int j = i+i; j<eratos.length; j+=i) {
+					eratos[j] = true;
+				}				
+			}
+		}
+	}
+	
+	public static void goldbach(int[] input) {
+		StringBuilder sb = new StringBuilder();
+		ArrayList<Integer> list = new ArrayList();
+		for(int i = 0; i<input.length; i++) {//입력의 갯수 만큼 반복
+			for(int j = 2; j<=input[i]; j++) {
+				if(!eratos[j]) {
+					list.add(j);
+				}
+			}
+			int x = 0;
+			int y = 0;
+			int a = 0;
+			int b = 0;
+			for(int k = 0; k<list.size(); k++) {
+				x = list.get(k);
+				for(int l = k; l<list.size(); l++) {
+					y = list.get(l);
+					if(x+y==input[i]) {
+						a = x;
+						b = y;
+				
+					}else if(x+y>input[i]) {
+						break;
+					}
+				}
+			}
+			sb.append(a+" "+b+"\n");
+			list.clear();
+		}
+		System.out.println(sb);
+	}
+}
+
+이후에 가장 짧은 코드를 짜신분의 코드를 보고
+해당수의 절반부터 시작하여 
+if(!prime[j]&&!prime[k-j])일때의 조건을 입력하여 해당조건에 들어오면 무조건 가장 작은 수이기 때문에 StringBuilder에 쌓고 break를 하였습니다.
+
+*/
