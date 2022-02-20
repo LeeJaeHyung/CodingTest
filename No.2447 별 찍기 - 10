@@ -1,0 +1,91 @@
+/*
+    문제
+    재귀적인 패턴으로 별을 찍어 보자. N이 3의 거듭제곱(3, 9, 27, ...)이라고 할 때, 크기 N의 패턴은 N×N 정사각형 모양이다.
+
+    크기 3의 패턴은 가운데에 공백이 있고, 가운데를 제외한 모든 칸에 별이 하나씩 있는 패턴이다.
+
+    ***
+    * *
+    ***
+    N이 3보다 클 경우, 크기 N의 패턴은 공백으로 채워진 가운데의 (N/3)×(N/3) 정사각형을 크기 N/3의 패턴으로 둘러싼 형태이다. 예를 들어 크기 27의 패턴은 예제 출력 1과 같다.
+
+    입력
+    첫째 줄에 N이 주어진다. N은 3의 거듭제곱이다. 즉 어떤 정수 k에 대해 N=3k이며, 이때 1 ≤ k < 8이다.
+
+    출력
+    첫째 줄부터 N번째 줄까지 별을 출력한다.
+*/
+
+/*
+
+  풀이: 입력이 3의 몇 승 인지를 확인하고 해당 수 만큼 별을 찍는 재귀함수를 반복하는 구조로 설계 하였습니다.
+        재귀함수의 구조는 String 배열로 선언하여 반복할때 마다 3배의 크기를 가지는 String배열을 반환
+        Sting배열을 가져와 해당 구간을 3*3 구조로 생각하고 
+        본다면 아래와 같이 되는데
+        
+    1    * * *      
+    2    *   *
+    3    * * *
+        
+        1열과 3열의 구조는 같기때문에  해당 구조는 복사하여 넣어주고 
+        2열에서는 한번 이전의 별을 붙여놓고 해당 크기만큼 공백을 추가한후에 다시 별을 붙여넣는 과정을 통해 문제를 풀었습니다
+        
+*/
+
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class Main {
+	
+	static StringBuilder sb = new StringBuilder();
+	static int n;
+	
+	public static void main(String[] args) throws Exception{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		n = Integer.parseInt(br.readLine());
+		int count = 0;
+		while(true) {// 몇승인지 아는 법
+			if(n==1) {
+				break;
+			}
+			count++;
+			n/=3;
+			
+		}
+		n = count+1;
+		String[] star = {"*"};
+		
+		String [] x = starsMaker(1, star);
+		for(String xx : x) {
+			System.out.println(xx);
+		}
+		
+	}
+	
+	public static String[] starsMaker(int count, String[] star) {
+		if(n==count) {
+			return star;
+		}
+		
+		String[] now  = new String[star.length*3];
+		
+		for(int i = 0; i<3; i++) {//2
+			for(int j = 0; j<star.length; j++) {
+				for(int k = 0; k<3; k++) {
+					if(i==1&&k==1) {
+						for(int l = 0; l<star[j].length(); l++) {
+							sb.append(" ");
+						}
+					}else {
+						sb.append(star[j]);
+					}
+				}
+				now[i*star.length+j] = sb.toString();
+				sb.setLength(0);
+			}
+		}
+		
+		return starsMaker(count+1, now);
+	}
+}
