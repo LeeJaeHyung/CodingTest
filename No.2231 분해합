@@ -1,0 +1,64 @@
+/*
+    문제
+    어떤 자연수 N이 있을 때, 그 자연수 N의 분해합은 N과 N을 이루는 각 자리수의 합을 의미한다. 어떤 자연수 M의 분해합이 N인 경우, M을 N의 생성자라 한다. 예를 들어, 245의 분해합은 256(=245+2+4+5)이 된다. 따라서 245는 256의 생성자가 된다. 물론, 어떤 자연수의 경우에는 생성자가 없을 수도 있다. 반대로, 생성자가 여러 개인 자연수도 있을 수 있다.
+
+    자연수 N이 주어졌을 때, N의 가장 작은 생성자를 구해내는 프로그램을 작성하시오.
+
+    입력
+    첫째 줄에 자연수 N(1 ≤ N ≤ 1,000,000)이 주어진다.
+
+    출력
+    첫째 줄에 답을 출력한다. 생성자가 없는 경우에는 0을 출력한다.
+*/
+
+/*
+  풀이 :  N은 M과 M을 이루는 각 자리수의 합을 이루는 수중 가장 작은 M을 의미 합니다
+  
+         가장 작은 반복문의 횟수를 구하는 조건문에서 각 자리수가 모두 9일때 가 가장작은 경우의 수가 된다 생가하여 
+         N-자리수*9 가 반복문의 가장 작은 지점 이라 생각하여 풀었습니다
+         
+         하지만 만약  1<N<=18 이라면 해당 값은 - 값이 되어 NumberFomatException이 발생하게 됩니다.
+         
+         이후에 시작지점을 구분하여주고 %10을이용하여 가장 마지막 자리수를 뽑아내어 더해주고 해당 기준값을 /10 하여 해당 기준값을 쉬프트 처리해주면서 더하였습니다.
+  
+*/
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Main {
+
+	public static void main(String[] args) throws NumberFormatException, IOException {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String sn = br.readLine();
+		int n = Integer.parseInt(sn);
+		int size = sn.length();
+		int answer = 0;
+		int startNum = 0;
+		
+		if(n>18) {
+			startNum = n -size*9;
+		}else {
+			startNum = 1;
+		}
+		for (int start = startNum; start < n; start++) {
+			int nowNumber = start;
+			int temp = nowNumber;
+			
+			while(temp>0) {
+				nowNumber+=temp%10;
+				temp/=10;
+			}
+			
+			if (n == nowNumber) {
+				answer = start;
+				break;
+			}
+		}
+		System.out.println(answer);
+	}
+
+}
