@@ -1,0 +1,163 @@
+/*
+
+문제 
+N개의 수가 주어졌을 때, 이를 오름차순으로 정렬하는 프로그램을 작성하시오.
+
+입력
+첫째 줄에 수의 개수 N(1 ≤ N ≤ 1,000)이 주어진다. 둘째 줄부터 N개의 줄에는 수 주어진다. 이 수는 절댓값이 1,000보다 작거나 같은 정수이다. 수는 중복되지 않는다.
+
+출력
+첫째 줄부터 N개의 줄에 오름차순으로 정렬한 결과를 한 줄에 하나씩 출력한다.
+
+*/
+
+/*
+
+풀이 : 1번 코드에서는 while문을 통해 배열 input의 n번 인덱스와 n+1번 인덱스 스를 비교하여 더이상 자리 바꿈이 발생하지 않을때 break를 통해서 결과를 도출
+       2번 코드에서는 input의  n번 인덱스와 n+1번 인덱스를 비교하였고 해당 비교를 통해 가장 큰값이 마지막 인덱스에 저장 됨으로
+           반복 할때 마다 탐색하는 범위를 -1 씩 해주었습니다.
+       3번 코드에서는 int형 배열에 수를 저장 하였음으로 Array.sort(배열)메소드를 이용하여 정렬하였습니다
+       4번 코드에서는 입력값의 범위는 -1000~1000임으로 해당 값들의 범위가 비교적 적은 편임으로 
+            boolean형 배열로 2001번 인덱스 까지 같는 배열을 선언 하여 
+            해당수가 있는 인덱스에 true값을 주어 초기화를 진행하고 
+            true인 인덱스를 조건문을 통해 찾아 출력하는 방식으로 하였습니다.
+            
+
+*/
+
+//1번코드
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class Main {
+	public static void main(String[] args) throws Exception {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+
+		int[] input = new int[n];
+
+		// 배열 촉기화
+		for (int i = 0; i < n; i++) {
+			input[i] = Integer.parseInt(br.readLine());
+		}
+
+		// 순서대로 정렬
+
+		boolean check = true;
+
+		while (check) {
+			check = false;
+			for (int j = 0; j < n - 1; j++) {
+				if (input[j] > input[j + 1]) {
+					int temp = input[j];
+					input[j] = input[j + 1];
+					input[j + 1] = temp;
+					check = true;
+				}
+			}
+		}
+		
+		//출력
+		for(int answer : input) {
+			System.out.println(answer);
+		}
+	}
+}
+
+//2번 코드
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class Main {
+	public static void main(String[] args) throws Exception {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+
+		int[] input = new int[n];
+
+		// 배열 촉기화
+		for (int i = 0; i < n; i++) {
+			input[i] = Integer.parseInt(br.readLine());
+		}
+
+		// 순서대로 정렬
+
+		
+		for(int j=0; j<n; j++) {
+			for(int k=0; k<n-j-1; k++) {
+				if(input[k]>input[k+1]) {
+					int temp = input[k];
+					input[k] = input[k+1];
+					input[k+1] = temp;
+				}
+			}
+		}
+		
+		//출력
+		for(int answer : input) {
+			System.out.println(answer);
+		}
+	}
+}
+
+
+//3번 코드
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+public class Main {
+	public static void main(String[] args) throws Exception {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+
+		int[] input = new int[n];
+
+		// 배열 초기화
+		for (int i = 0; i < n; i++) {
+			input[i] = Integer.parseInt(br.readLine());
+		}
+
+		// 순서대로 정렬
+	
+		Arrays.sort(input);
+	
+		
+		//출력
+		for(int answer : input) {
+			System.out.println(answer);
+		}
+	}
+}
+
+//4번 코드
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class Main {
+	public static void main(String[] args) throws Exception {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+		StringBuilder sb= new StringBuilder();
+		
+		boolean[] arr = new boolean[2001];
+		
+		for(int i=0; i<n; i++) {
+			arr[Integer.parseInt(br.readLine())+1000] = true;
+		}
+		
+		for(int i=0; i<2001; i++) {
+			if(arr[i]) {
+				sb.append(i-1000).append("\n");
+			}
+		}
+		
+		System.out.println(sb);
+		
+	}
+}
