@@ -1,0 +1,75 @@
+/*
+  "OOXXOXXOOO"와 같은 OX퀴즈의 결과가 있다. O는 문제를 맞은 것이고, X는 문제를 틀린 것이다. 문제를 맞은 경우 그 문제의 점수는 그 문제까지 연속된 O의 개수가 된다. 예를 들어, 10번 문제의 점수는 3이 된다.
+  "OOXXOXXOOO"의 점수는 1+2+0+0+1+0+0+1+2+3 = 10점이다.
+  OX퀴즈의 결과가 주어졌을 때, 점수를 구하는 프로그램을 작성하시오.
+*/
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		float[] score = new float[Integer.parseInt(br.readLine())];
+		String str;
+		int count = 0;
+		float x = 0;
+		for(int i = 0; i<score.length; i++) {
+			str = br.readLine();
+			StringTokenizer st = new StringTokenizer(str.replace('X', ' ')," ");
+			count = st.countTokens();
+			for(int j = 0; j<count; j++) {
+				x = st.nextToken().length();
+				score[i] += (1+x)*(x/2);
+			}
+		}
+		for(int k = 0; k<score.length; k++) {
+			System.out.println((int)score[k]);
+		}
+		
+	}
+}
+
+위와 같이 작성하였다 1->n까지 더하는 공식은 (x+1)*(x/2)이와 같이 정리 할수 있다
+따라서 조건문 없이 2중 포문을 돌게되면 알아서 점수를 채점해준다
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+public class Main{
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
+
+        int N = Integer.parseInt(br.readLine());
+        String[] arr = new String[N];
+
+        for(int i=0; i<N; i++){
+            arr[i] = br.readLine();
+        }
+        
+        for(int i=0; i<N; i++){
+            int count = 0;
+            int sum = 0;
+
+            for(int j=0; j<arr[i].length(); j++){
+                if(arr[i].charAt(j) == 'O'){
+                    count++;
+                }
+                else{
+                    count = 0;
+                }
+                sum += count;
+            }
+            sb.append(sum).append("\n");
+        }
+
+        System.out.print(sb);
+
+    }
+}
+
+하지만 위에 있는 코드를 보고 더 간편하게 생각하면 되는거였다;

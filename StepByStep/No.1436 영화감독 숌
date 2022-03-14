@@ -1,0 +1,77 @@
+/*
+
+문제
+666은 종말을 나타내는 숫자라고 한다. 따라서, 많은 블록버스터 영화에서는 666이 들어간 제목을 많이 사용한다.
+영화감독 숌은 세상의 종말 이라는 시리즈 영화의 감독이다. 
+조지 루카스는 스타워즈를 만들 때, 스타워즈 1, 스타워즈 2, 스타워즈 3, 스타워즈 4, 스타워즈 5, 스타워즈 6과 같이 이름을 지었고,
+피터 잭슨은 반지의 제왕을 만들 때, 반지의 제왕 1, 반지의 제왕 2, 반지의 제왕 3과 같이 영화 제목을 지었다.
+
+하지만 숌은 자신이 조지 루카스와 피터 잭슨을 뛰어넘는다는 것을 보여주기 위해서 영화 제목을 좀 다르게 만들기로 했다.
+
+종말의 숫자란 어떤 수에 6이 적어도 3개이상 연속으로 들어가는 수를 말한다. 제일 작은 종말의 숫자는 666이고, 그 다음으로 큰 수는 1666, 2666, 3666, .... 과 같다.
+
+따라서, 숌은 첫 번째 영화의 제목은 세상의 종말 666, 두 번째 영화의 제목은 세상의 종말 1666 이렇게 이름을 지을 것이다. 일반화해서 생각하면,
+N번째 영화의 제목은 세상의 종말 (N번째로 작은 종말의 숫자) 와 같다.
+
+숌이 만든 N번째 영화의 제목에 들어간 숫자를 출력하는 프로그램을 작성하시오. 숌은 이 시리즈를 항상 차례대로 만들고, 다른 영화는 만들지 않는다.
+
+입력
+첫째 줄에 숫자 N이 주어진다. N은 10,000보다 작거나 같은 자연수이다.
+
+출력
+첫째 줄에 N번째 영화의 제목에 들어간 수를 출력한다.
+
+*/
+
+/*
+
+풀이: 정수형 변수 asnwer를 선언하고 해당 변수를 665 부터 1씩 증가 시키며 
+      해당 answer를 정수형 변수 target에 대입한 후 target%10이 6이라면 sixCount라는 변수를 증가 시키며 아니라면 sixCount를 0으로 초기화하여
+      6이 얼만큼 중복적으로 포함되어있는지 를 확인하고 target/10!=0 일때 까지 반복 하며  sixCount가 3 이상이라면 count를 증가 시키고 해당 루프를 break시킵니다 
+      count가 n과 같아지면 answer을 출력하고 종료하는 식으로 풀었습니다.
+      
+     다른 분들의 풀이를 본결과 다양한 방법이 존재하나 가장 기억에 남는것은 String클래스의 contains()매소드를 이용하여 해당 문자열이 존재하는지 확인 하는 방법이었습니다.
+     시간은 오래 걸리나 보다 편하게 풀어낸것을 확인하였습니다.
+     
+
+
+*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class Main {
+	
+	static int[] result;
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());;
+		
+		System.out.println(checker(n));
+		
+	}
+	
+	public static int checker(int n) {
+		int count = 0;
+		int answer = 665;// 첫번째 666 시작은 666이기때문에 
+		while(count!=n) {
+			answer++;
+			int target = answer;
+			int sixCount = 0;
+			while(target!=0) {
+				if(target%10==6) {
+					sixCount++;
+				}else {
+					sixCount=0;
+				}
+				if(sixCount==3) {
+					count++;
+					break;
+				}
+				target/=10;
+			}
+		}	
+		return answer;
+	}
+}

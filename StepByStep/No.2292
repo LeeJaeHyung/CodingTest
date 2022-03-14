@@ -1,0 +1,42 @@
+/*
+문제
+
+육각형이 다닥다닥 붙어이있는구조 
+
+위의 그림과 같이 육각형으로 이루어진 벌집이 있다. 그림에서 보는 바와 같이 중앙의 방 1부터 시작해서 이웃하는 방에 돌아가면서 1씩 증가하는 번호를 주소로 매길 수 있다. 숫자 N이 주어졌을 때, 벌집의 중앙 1에서 N번 방까지 최소 개수의 방을 지나서 갈 때 몇 개의 방을 지나가는지(시작과 끝을 포함하여)를 계산하는 프로그램을 작성하시오. 예를 들면, 13까지는 3개, 58까지는 5개를 지난다.
+
+입력
+첫째 줄에 N(1 ≤ N ≤ 1,000,000,000)이 주어진다.
+
+출력
+입력으로 주어진 방까지 최소 개수의 방을 지나서 갈 때 몇 개의 방을 지나는지 출력한다.
+*/
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Main {
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int input = Integer.parseInt(br.readLine());
+		int compare = 1;
+		int rootCount = 1;
+		while(true) {
+			if(input<=compare) { //2+checkCount 보다 input이 낮은경우 loop를 중단 한다
+				System.out.println(rootCount);
+				break;
+			}else {
+				compare += rootCount*6;
+				rootCount++;
+			}
+		}
+	}
+}
+
+/*
+문제 풀이 방법은 시작과 끝을 포함하여 총 몇개의 방을 지나는 것이 최단 거리 인가는 
+단순히 생각해서 1 7 19 37.. 각각의 수를 지날때 마다 필요한 최단 거리의 칸의 수가 늘어난다
+1부터 시작하여 이전에 비교한 칸의 수에 6*지나온 거리를 더해주면 해당 칸의 최단거리가 바로 나오게 된다.
+생각보다 간단한 문제였지만 푸는데 시간이 조금 걸렸습니다. 처음 접하는 문제라 저만의 방식으로 풀어나가는 것이 성취감이 크게 느껴졌습니다.
+*/

@@ -1,0 +1,103 @@
+/*
+문제
+M이상 N이하의 소수를 모두 출력하는 프로그램을 작성하시오.
+
+입력
+첫째 줄에 자연수 M과 N이 빈 칸을 사이에 두고 주어진다. (1 ≤ M ≤ N ≤ 1,000,000) M이상 N이하의 소수가 하나 이상 있는 입력만 주어진다.
+
+출력
+한 줄에 하나씩, 증가하는 순서대로 소수를 출력한다.
+*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) throws Exception{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int m = Integer.parseInt(st.nextToken());
+		int n = Integer.parseInt(st.nextToken());
+		boolean check = false;
+		for(int i = m; i<=n; i++) {
+			check = false;
+			if(i!=1) {
+				for(int j = 2; j*j<=i; j++) {
+					if(i%j==0) {
+						check = true;
+						break;
+					}
+				}
+				if(!check) {
+					System.out.println(i);
+				}
+			}
+		}
+	}
+}
+
+/*
+위에 코드가 처음으로 작성한 코드였습니다. 
+상당히 시간이 오래걸렸습니다. 따라서 다른분들의 방식을 보니 
+boolean 배열로 n+1까지의 크기를 가지는 변수를 할당한 이후에 
+이 배열을 에라토스 테네스의 체를 이용하여 처리시간을 줄였고
+이것은 수학적공식입니다.
+
+소수를 찾고자 하는 수만큼 할당하고 그수를 앞에서 부터 지워나가는 방식입니다.
+1은 소수가 아니니 1은 초기화를 시켜주고 이후에 등장하는 false부터 해당 값의 *2를 해준인덱스 부터 찾고 해당값을 true바꿔준후
+증감식은 j+=i 가 되어 이후에 해당 수의 배수를 찾아 모두 ture 로 바꾸어 주었습니다.
+
+ture로 바꾸어 주는 초기 수를 찾는것은 해당수의 범위를 Math.sqrt(n);을 이용해서 n의 제곱근을 찾았고 그 제곱근 이전의 수들만 해당 처리과정을 해주었습니다.
+이미 ture인 수는 배수의 true해주는 과정을 거치지 안습니다
+이미 그전의 더작은 수로 나누어 졌을것이기 때문입니다.
+
+
+1256ms -> 876ms 로 시간이 확실히 줄긴하였지만 다른분들에 비해 상당히 느렸고
+이유를 찾다보니 StringBuilder로 한번에 쌓아서 출력하는것이 생각보다 시간차를 줄여주었고
+876ms -> 248ms 까지 단축할수 있었습니다.
+
+이후에 수정된 코드는 아래와 같습니다.
+
+
+*/
+package com.backjoon.test;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+	static boolean[] idx;
+
+	public static void main(String[] args) throws Exception {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		StringBuilder sb = new StringBuilder();
+		int m = Integer.parseInt(st.nextToken());
+		int n = Integer.parseInt(st.nextToken());
+		idx = new boolean[n + 1];
+		// 에라토스 테네스의 체 를 이용
+		eratos();
+		for (int i = m; i <= n; i++) {
+			if (!idx[i]) {
+				sb.append(i).append("\n");
+			}
+		}
+		System.out.println(sb);
+	}
+
+	public static void eratos() {
+		double loopSize = Math.sqrt(idx.length);
+		idx[1] = true;// 1은 소수가 아니기 때문에 소수를 false로 기준을 잡고 진행을 하여준다 초기값이 false이기 때문에 에라토스 테네스의 체의 공식을
+						// 대입 시 false가 소수가 됨
+		for (int i = 2; i <= loopSize; i++) {
+			if (idx[i])
+				continue;
+			for (int j = i + i; j < idx.length; j += i) {
+				idx[j] = true;
+			}
+		}
+	}
+}

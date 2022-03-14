@@ -1,0 +1,50 @@
+/*
+  두 자연수 A와 B가 있을 때, A%B는 A를 B로 나눈 나머지 이다. 예를 들어, 7, 14, 27, 38을 3으로 나눈 나머지는 1, 2, 0, 2이다. 
+  수 10개를 입력받은 뒤, 이를 42로 나눈 나머지를 구한다. 그 다음 서로 다른 값이 몇 개 있는지 출력하는 프로그램을 작성하시오.
+*/
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Main {
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int[] input =  new int[42];
+		int x = 0;
+		int count = 10;
+		for(int i = 0; i<10; i++) {
+			x = Integer.parseInt(br.readLine())%42;
+			input[x] ++;
+			if(input[x]>1) {
+				count--;
+			}
+		}
+		br.close();
+		System.out.println(count);
+	}
+}
+
+// 위와 같은 방식으로 풀었습니다. 42개의 변수 공간을 지정하고 해당 입력받은 값을 42로 나눈후 해당 인덱스에 값을 증가시키고 1보다 크면 count를 최대값인 10 에서 1씩 감소 시켰다
+// 다른사람들의 방식을 보니 아래와 같이 HashSet에 값을 대입하고 해당 Set은 중복된 값을 가질수 없기 때문에 중복이 자동으로 걸러지게 된다.
+// 따라서 HashSet의 size()함수를 호출하여 크기를 확인하면 중복된값이 걸러진 값을 알아낼 수 있다.
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.HashSet;
+
+public class Main{
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        HashSet<Integer> set = new HashSet<Integer>();
+        int[] arr = new int[10];
+
+        for(int i=0; i<10; i++){
+            arr[i] = Integer.parseInt(br.readLine());
+            set.add(arr[i]%42);
+        }
+
+        System.out.println(set.size());
+    }
+}
