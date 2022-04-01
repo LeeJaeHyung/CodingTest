@@ -1,0 +1,131 @@
+/*
+문제
+알파벳 소문자로 이루어진 N개의 단어가 들어오면 아래와 같은 조건에 따라 정렬하는 프로그램을 작성하시오.
+
+길이가 짧은 것부터
+길이가 같으면 사전 순으로
+입력
+첫째 줄에 단어의 개수 N이 주어진다. (1 ≤ N ≤ 20,000) 둘째 줄부터 N개의 줄에 걸쳐 알파벳 소문자로 이루어진 단어가 한 줄에 하나씩 주어진다. 주어지는 문자열의 길이는 50을 넘지 않는다.
+
+출력
+조건에 따라 정렬하여 단어들을 출력한다. 단, 같은 단어가 여러 번 입력된 경우에는 한 번씩만 출력한다.
+*/
+
+/*
+  풀이 : 
+        
+        <조건> 1.길이가 작은순 2.길이가 같을 경우 사전순 3.중복제거
+        
+        병합 정렬을 이용하여 풀었습니다.
+        
+        1.Set에 입력값들을 넣고 중복을 제거하였습니다.
+        
+        2.Set에 있는 값들을 String 배열에 대입한 후
+        
+        3.String 배열을 병합 정렬을 이용하여 길이가 작은 순으로 병합하고 문자열의 길이가 같을 때는 사전 순으로 정렬하여 subArr에 쌓은 후 subArr의 값을 strArr[i+start]~strArr[end]까지 대입하였습니다.
+        
+        4. 병합 정렬을 끝낸 후에 모든 값들을 StringBuilder에 쌓고 한 번에 출력하였습니다.
+
+        처음 문제를 풀어간 방식은 값들을 Set에 넣어 중복을 제거한 후
+        계수 정렬 방식을 이용하여 길이 별로 정렬한 후
+        정렬할 때 배열의 들어있는 요소를 int 배열을 이용하여 카운트하고
+        길이별로 정렬되어 있는 2차원 배열에 별로 들어가 해당 인덱스와 같은 int 배열의 데이터가 0이 아닐 때
+        정렬을 한 후 위와 같은 방식으로 StringBuilder에 쌓아 출력하는 방식을 이용하였습니다.
+        
+        처음 푼 방식은 상대적으로 구조가 복잡하고 데이터의 공간이 입력 X 단어의 길이만큼 메모리를 많이 사용하게 되기도 하고
+        제출 시 시간 초과 가 발생하여
+        상대적으로 하나의 정렬만 이용하여 풀려고 노력한 결과
+        병합 정렬 과정에서 길이를 우선적으로 구분한 후 처리하는 과정을 달리하여 풀었습니다.
+        
+*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
+
+
+class Main {
+	
+	static String[] subArr;
+
+	public static void merge(String[] strArr, int start, int mid, int end) {
+		int left = start;
+		int right = mid+1;
+		int count = 0;
+		while(left<=mid&&right<=end) {
+			if(strArr[left].length()==strArr[right].length()) {// 길이가 같을때 
+				for(int i = 0; i < strArr[left].length(); i++) {
+					if(strArr[left].charAt(i)==strArr[right].charAt(i)) {
+						continue;
+					}
+					if(strArr[left].charAt(i)<strArr[right].charAt(i)) {
+						subArr[count++] = strArr[left++];
+						break;
+					}
+					if(strArr[left].charAt(i)>strArr[right].charAt(i)) {
+						subArr[count++] = strArr[right++];
+						break;
+					}
+				}
+			}else {//길이가 다를 때
+				if(strArr[left].length()<strArr[right].length()) {
+					subArr[count++] = strArr[left++];
+				}
+				if(strArr[left].length()>strArr[right].length()) {
+					subArr[count++] = strArr[right++];
+				}
+			}
+		}
+		
+		while(left<=mid) {
+			subArr[count++] = strArr[left++];
+		}
+		while(right<=end) {
+			subArr[count++] = strArr[right++];
+		}
+		
+		for(int i = 0; i < count; i++) {
+			strArr[start+i] = subArr[i];
+		}
+		
+	}
+
+	public static void mergeSort(String[] strArr, int start, int end) {
+
+		if (start < end) {
+			int mid = (start + end) / 2;
+			mergeSort(strArr, start, mid);
+			mergeSort(strArr, mid + 1, end);
+			merge(strArr, start, mid, end);
+		}
+
+	}
+
+	public static void mergeSort(String[] strArr) {
+		mergeSort(strArr, 0, strArr.length-1);
+	}
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
+		int N = Integer.parseInt(br.readLine());
+		Set<String> set = new HashSet<String>();
+		for (int i = 0; i < N; i++) {
+			set.add(br.readLine());
+		}
+		int loopCount = 0;
+		String[] strArr = new String[set.size()];
+		subArr = new String[strArr.length];
+		for (String input : set) {
+			strArr[loopCount] = input;
+			loopCount++;
+		}
+		mergeSort(strArr);
+		for(String answer : strArr) {
+			sb.append(answer).append("\n");
+		}
+		System.out.println(sb);
+		
+	}
+}
