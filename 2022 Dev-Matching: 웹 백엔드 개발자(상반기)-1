@@ -1,5 +1,5 @@
-프로그래머스에서 진행하는 <2022 Dev-Matching: 웹 백엔드 개발자(상반기)-1>에 지원하였습니다.
-
+/*프로그래머스에서 진행하는 <2022 Dev-Matching: 웹 백엔드 개발자(상반기)-1>에 지원하였습니다.*/
+/*
 풀어본 문제 <1번 문제>
 
 점과 점사이의 거리가 2차원 배열의 형태로 주어지고 
@@ -37,3 +37,119 @@ dist[i][j] = i 와 j 사이의 거리 가 된다.
 DFS,BFS등의 탐색알고리즘+힙정렬 
 DP
 위의 세가지 방식에 대한 공부는 5월 2일 까지 맞치는것이 목표입니다.
+
+<다시 풀어본 코드>
+*/
+class Solution {
+	
+	static int[] subArr;
+	
+	public static void main(String[] args) {
+		int[][] dist = {{0,5,2,4,1},{5,0,3,9,6},{2,3,0,6,3},{4,9,6,0,3,},{1,6,3,3,0}};
+		int[][] answer = solution(dist);
+		
+		for(int[] x : answer) {
+			System.out.print("[");
+			for(int y : x) {
+				System.out.print(y+" ");
+			}
+			System.out.println("]");
+		}
+		
+	}
+	
+    public static int[][] solution(int[][] dist) {
+    	int[][] answer = {};
+    	
+    	int distanceM = 0; 
+    	int target = 0;
+    	
+    	for(int i = 0; i < dist[0].length-1; i++) {
+    		for(int j = i+1; j < dist.length; j++ ) {
+    			if(distanceM<dist[i][j]) {
+    				distanceM = dist[i][j];
+    				target = i;
+    			}
+    		}
+    	}
+    	
+    	answer = arr(dist[target]);
+    	
+        
+        return answer;
+    }
+    
+    public static int[][] arr(int[] dist) {
+    	int[] answer = new int[dist.length];
+    	for(int i = 0; i < answer.length; i++) {
+    		answer[i] = dist[i];
+    	}
+    	subArr = new int[dist.length];
+    	mergeSort(answer);
+    	for(int i = 0; i < answer.length; i++) {
+    		for(int j = 0; j < dist.length; j++) {
+    			if(answer[i] == dist[j]) {
+    				subArr[i] = j;
+    				break;
+    			}
+    		}
+    	}
+    	return dictionarySort();
+    }
+    
+    public static void mergeSort(int[] answer) {
+    	mergeSort(answer, 0, answer.length-1);
+    }
+  
+    public static void mergeSort(int[] answer, int start, int end) {
+    	if(start<end) {
+    		int mid = (start+end)/2;
+    		mergeSort(answer, start, mid);
+    		mergeSort(answer, mid+1, end);
+    		merge(answer, start, mid, end);
+    	}
+    }
+    
+    public static void merge(int[] answer, int start, int mid, int end) {
+    	int left = start;
+    	int right = mid+1;
+    	int count = 0;
+    	while(left<=mid&&right<=end) {
+    		if(answer[left]<answer[right]) {
+    			subArr[count++]  = answer[left++];
+    		}else {
+    			subArr[count++]  = answer[right++];
+    		}
+    	}
+    	while(left<=mid) {
+    		subArr[count++]  = answer[left++];
+    	}
+    	while(right<=end) {
+    		subArr[count++]  = answer[right++];
+    	}
+    	
+    	for(int i = 0; i < count; i++) {
+    		answer[i+start] = subArr[i];
+    	}
+    }
+    
+    public static int[][] dictionarySort() {
+    	int[][] answer = new int[2][];
+    	int[] toggle = new int[subArr.length];
+    	for(int i = 0; i < subArr.length; i++) {
+    		toggle[i] = subArr[subArr.length-i-1];
+    	}
+    	if(toggle[0]<subArr[0]) {
+    		answer[0] = toggle;
+    		answer[1] = subArr;
+    	}else {
+    		answer[0] = subArr;
+    		answer[1] = toggle;
+    	}
+    	
+    	return answer;
+    }
+    
+    
+   
+}
