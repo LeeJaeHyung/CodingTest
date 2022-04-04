@@ -1,0 +1,179 @@
+/*
+    문제
+    수직선 위에 N개의 좌표 X1, X2, ..., XN이 있다. 이 좌표에 좌표 압축을 적용하려고 한다.
+
+    Xi를 좌표 압축한 결과 X'i의 값은 Xi > Xj를 만족하는 서로 다른 좌표의 개수와 같아야 한다.
+
+    X1, X2, ..., XN에 좌표 압축을 적용한 결과 X'1, X'2, ..., X'N를 출력해보자.
+
+    입력
+    첫째 줄에 N이 주어진다.
+
+    둘째 줄에는 공백 한 칸으로 구분된 X1, X2, ..., XN이 주어진다.
+
+    출력
+    첫째 줄에 X'1, X'2, ..., X'N을 공백 한 칸으로 구분해서 출력한다.
+*/
+
+/*
+  
+  풀이 : 
+  <풀이별 메모리 , 시간>
+  1. 184676 KB	1224 ms = read(), 중복제거 = map.containsKey //입력값을 담는배열  1개, 정렬된 입력값을 가지는 배열 1개
+  2. 237448 KB	1408 ms = read(), 중복제거 = set // 입력값을 담는배열  1개, 정렬된 입력값을 가지는 배열 1개
+  3. 358536 KB	1688 ms = BufferedReader+StringTokenizer + Integer.parseInt(), 중복제거 = map.containsKey //입력값을 담는배열  1개, 정렬된 입력값을 가지는 배열 1개
+  4. 365412 KB	2092 ms = BufferedReader+StringTokenizer + Integer.parseInt(), 중복제거 = Set //입력값을 답는배열  1개
+  
+  [첫 번째 풀이 -> 메모리, 시간 : 4번]
+  1. BufferedReader br을 이용하여 입력을 받고 
+  2. 해당 입력을 String input = br.readLine()하여 input에 대입
+  3. 해당 입력을 StringTokenizer st = new StringTokenizer(input)을 이용
+  4. 대입 한 후 중복 제거를 위해 Set<Integer> set을 선언하여 set.add(Integer.parseInt(st.nextToken())) set에 모든 데이터를 넣어 중복을 제거 하였습니다
+  5. int setSize = set.size(); -> int[] arr = new int[setSize]; -> int idx = 0; -> |for(int data : set) { 을통해  set의 모든 데이터를 arr에 대입
+                                                                                   |   arr[idx++] = data;
+                                                                                   |}                    
+	6. arr의 데이터를 구현된 mergeSort(arr)메소드를 이용하여 병합정렬
+  7. Map<String,Integer> map = new HashMap<String,Integer>(); 맵 생성
+  8. for문 이용 map.put(i+"",arr[i]); 를 이용하여 대입
+  8. 다시한번 새로운 StringTokenizer 생성 st = new StringTokenizer(input);
+  9. StringBuilder sb를 이용하여 sb.append(map.get(st.nextToken())).append(" "); 출력값을 StringBuilder에 쌓음
+  10. System.out.println(sb); 출력
+  
+  첫 번째 풀이의 개선 필요점 -> [입력 받고 입력을 배열에 저장하는 방식, 중복을 제거하는 방식]
+  
+  1.입력을 배열에 저장하는 방식 int[] arr, sortArr을 선언 하고 해당 배열에 한번에 입력을 담고 sortArr을 정렬 
+    기존 입력값을 받고 변환 저장 하는 방식 BufferedReader + StringTokenizer + Integer.parseInt() 에서
+    
+    private static int read() throws Exception {
+
+		int c, N = System.in.read() - 48;
+
+		if (N + 48 == '-') { // 음수 처리
+			N = 0;
+			while ((c = System.in.read()) > 32)
+				N = 10 * N - c + 48;
+		} else
+			while ((c = System.in.read()) > 32)
+				N = 10 * N + c - 48; // 양수 처리
+
+		if (c == 13)
+			System.in.read(); // For CRLF
+
+		return N;
+
+	 }
+   
+   위의 코드 처럼 read()메소드 정의
+   
+   for문에서 arr[i] = sortArr[i] = read();
+   를이용하여 입력을 받는다.
+    
+  
+  2.중복 제거 방식! -> Map<Integer, Integer> map = new HashMap<Integer, Integer>(); map에 값을 대입 if문을 통해 !map.contatisKey을 통해 값이 없을경우에만 map에 대이터를 put()
+  for (int i = 0; i < arr.length; i++) {
+			int data = sortArr[i];
+			if (!map.containsKey(data)) {// 해당 키값이 존재하지 않을때
+				map.put(data, idx++);
+			}
+	}
+  위의 코드별 결과를 통해 입력이 상대적으로 중복값이 많지 않음을 확인! 따라서 중복값을 제거한후 정렬 하는것 보다 
+  먼저 중복을 제거하지 않고 데이터를 정렬 이후 if(!Map.containsKey())를 통해 중복을 제거하며 Map에 쌓는것이 효율적임
+  이유 : Set에 데이터를 넣고 set에서 데이터를 꺼내는 것보다 중복횟수 만큼 병합정렬을 더진행하는 것이 상대적으로 빠름을 알 수 있음
+  
+*/
+
+<최종 코드>
+import java.util.HashMap;
+import java.util.Map;
+
+class Main {
+
+	static int[] subArr;
+
+	public static void main(String[] args) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		int N = read();
+		int[] arr = new int[N];
+		int[] sortArr = new int[N];
+
+		for (int i = 0; i < N; i++) {
+			arr[i] = sortArr[i] = read();
+		}
+
+		mergeSort(sortArr);
+
+		//
+		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+		int idx = 0;
+		for (int i = 0; i < arr.length; i++) {
+			int data = sortArr[i];
+			if (!map.containsKey(data)) {// 해당 키값이 존재하지 않을때
+				map.put(data, idx++);
+			}
+		}
+
+		for (int i = 0; i < N; i++) {
+			sb.append(map.get(arr[i])).append(" ");
+		}
+		System.out.println(sb);
+	}
+
+	public static void mergeSort(int[] arr) {
+		subArr = new int[arr.length];
+		mergeSort(arr, 0, arr.length - 1);
+	}
+
+	public static void mergeSort(int[] arr, int start, int end) {
+		if (start < end) {
+			int mid = (start + end) / 2;
+			mergeSort(arr, start, mid);
+			mergeSort(arr, mid + 1, end);
+			merge(arr, start, mid, end);
+		}
+	}
+
+	public static void merge(int[] arr, int start, int mid, int end) {
+		int left = start;
+		int right = mid + 1;
+		int count = 0;
+
+		while (left <= mid && right <= end) {
+			if (arr[left] < arr[right]) {
+				subArr[count++] = arr[left++];
+			} else {
+				subArr[count++] = arr[right++];
+			}
+		}
+		while (left <= mid) {
+			subArr[count++] = arr[left++];
+		}
+		while (right <= end) {
+			subArr[count++] = arr[right++];
+		}
+
+		for (int i = 0; i < count; i++) {
+			arr[start + i] = subArr[i];
+		}
+	}
+
+	private static int read() throws Exception {
+
+		int c, N = System.in.read() - 48;
+
+		if (N + 48 == '-') { // 음수 처리
+			N = 0;
+			while ((c = System.in.read()) > 32)
+				N = 10 * N - c + 48;
+		} else
+			while ((c = System.in.read()) > 32)
+				N = 10 * N + c - 48; // 양수 처리
+
+		if (c == 13)
+			System.in.read(); // For CRLF
+
+		return N;
+
+	}
+
+}
