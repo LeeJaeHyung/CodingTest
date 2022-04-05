@@ -1,0 +1,191 @@
+/*
+    문제
+    자연수 N과 M이 주어졌을 때, 아래 조건을 만족하는 길이가 M인 수열을 모두 구하는 프로그램을 작성하시오.
+
+    1부터 N까지 자연수 중에서 중복 없이 M개를 고른 수열
+    입력
+    첫째 줄에 자연수 N과 M이 주어진다. (1 ≤ M ≤ N ≤ 8)
+
+    출력
+    한 줄에 하나씩 문제의 조건을 만족하는 수열을 출력한다. 중복되는 수열을 여러 번 출력하면 안되며, 각 수열은 공백으로 구분해서 출력해야 한다.
+
+    수열은 사전 순으로 증가하는 순서로 출력해야 한다.
+*/
+
+/*
+  풀이 : 처음 문제를 직접 풀어보는 과정에서 문제를 이해하는 것이 상당히 어려웠습니다.
+         모든 수를 한번씩 이용하여 출력하여야 하고 해당 수의 범위가 난잡하여 이미 해당수가 출력에 쌓여있는지를 확인 하는것이 어려웠습니다.
+         유튜브에서 도움을 얻었습니다. 
+         코드 자체를 보고 도움을 얻기보단 
+         https://www.youtube.com/watch?v=Enz2csssTCs
+         위의 동영상에서 풀이 방식에서 어떤 방식을 사용하는지를 보았습니다 
+         백트래킹이라는 기술이 사용되며 해당 기술이 어떤 기술인지를 이해하고
+         직접 풀어보았습니다.
+         또한 이러한 과정 자체가 탐색방법중 하나이고 
+         이러한 방식의 대표적인 예는 BFS(BrathFristSearch) DFS(DeepFristSearch) 두가지가 주로 이용되는 경우가 많으며
+         해당 방식을 이해하기 전에 Queue와 Stack의 이해가 필요했습니다.
+         Queue란 Queue에 데이터를 집어 넣게 되면 넣은 순서 대로 출력이 되는 Class입니다
+         Stack이란 데이터를 집어 넣고 데이터를 꺼내게 되면 나중에 들어온 순서대로 출력이 되는 Class입니다
+         
+         해당 class들의 메소드들
+         
+         
+         <Stack>
+          Stack stack = new Stack();
+
+          push(); 	//Stack에값을 집어넣음
+          pop(); 	//Stack의 가장 나중에 들어온 값을 꺼내서 반환
+          clear(); 	// Stack의 모든값을 삭제
+          peek(); 	// Stack의 가장 나중에 들어온 읽어온다
+          search(); 	// Stack중 해당 객체의위치를 찾음
+
+
+          <Queue> -- interface이기 때문에 Queue를 구현(implements)한 LinkedList 객체를 이용합니다.Collection을 상속 받았음
+          Queue q = new LinkedList<>();
+ 
+          offer(); 	// 큐에 값을 넣음
+          poll(); 	// 큐에 객체를 꺼내서 반환
+          peek(); 	// 큐에서 삭제 없이 요소를 읽어온다
+          
+          
+          
+          
+          DFS -> 시작 점에서 인접한 노드중 하나를 선택(선택 방식에 따라 달리 동작한다), 방문처리 후 
+                 처리 과정을 거침 해당 노드의 인접한 노드중 선택기준에 따라 다시 방문 처리 후 과정을 반복한다
+                 하게 되면 인접한 노드들을 모두 순회하는 탐색이 가능하다.
+                 
+                 < 장점 >
+                  단지 현 경로상의 노드들만을 기억하면 되므로 저장 공간의 수요가 비교적 적다.
+                  목표 노드가 깊은 단계에 있을 경우 해를 빨리 구할 수 있다.
+
+                  < 단점 >
+                  해가 없는 경로에 깊이 빠질 가능성이 있다. 
+                  따라서 실제로는 미리 지정한 임의 깊이까지만 탐색하고 목표 노드를 발견하지 못하면 다음 경로를 따라 탐색하는 방법이 유용할 수 있다.
+                  얻어진 해가 최단 경로가 된다는 보장이 없다. 
+                  이는 목표에 이르는 경로가 다수인 문제에 대해 깊이우선탐색은 해에 다다르면 탐색을 끝내버리므로, 이때 얻어진 해는 최적이 아닐 수 있다는 의미이다.
+               
+                 
+                 
+                 
+          BFS -> 시작 점에서 인접한 노드들을 모두 큐에 놓고 방문 처리 이후에 다시 해당 노드들의 인접한 모든 노드들을 방문처리 
+                 이렇게 되면 너비를 우선적으로 순회하는 탐색이 가능하다.
+                 
+                  <장점>
+                  출발노드에서 목표노드까지의 최단 길이 경로를 보장한다.
+
+                  <단점>
+                  경로가 매우 길 경우에는 탐색 가지가 급격히 증가함에 따라 보다 많은 기억 공간을 필요로 하게 된다.
+                  해가 존재하지 않는다면 유한 그래프(finite graph)의 경우에는 모든 그래프를 탐색한 후에 실패로 끝난다.
+                  무한 그래프(infinite graph)의 경우에는 결코 해를 찾지도 못하고, 끝내지도 못한다
+           
+          DFS는  Stack을 이용 한다 하였지만 일반적으로 사용하는 방식이고 
+          for문을 이용하여 모든 모드를 탐색하였기 때문에 결과적으로 DFS 와 같이 동작 합니다.
+          
+         1. boolean[] check = boolean[N+1]// 1번인덱스 부터 N번인덱스 까지의 배열 길이를 가지는 check를 이용하여 해당 수가 이미 선택되어있는지를 확인
+         2. 이후 dfs(int)호출
+         3. dfs(0)을 호출
+         4. for문을 돌며 check[i]에 들어와 해당 값을 true로 바꿈 해당 수를 지금 사용 하고있음을 정의
+            다시 dfs(m+1)을 호출 해당 m == M과 같을 때 가지 check[i] = true를 반복하면서 재귀 호출
+            answer[2 * m] = (char)(i + '0');을 통해 answer에 출력값을 쌓음
+            다시 재귀호출이 끝나게 되면 check[i] = false를 통해 1~N까지 모든 값을 순회
+            
+         5. m==M 과 같아지면 StringBuilder에 값을 쌓고 재귀호출이 종료
+         6. 재귀호출이 완벽하게 종료되면 StringBuilder
+
+*/ 
+/*
+//<처음 >
+import java.util.Scanner;
+
+class Main{
+	static StringBuilder sb = new StringBuilder();
+	public static void main(String[] args) throws Exception {
+		Scanner sc = new Scanner(System.in);
+		
+		int N = sc.nextInt();
+		int M = sc.nextInt();
+		boolean[] node = new boolean[N+1];
+		int[] answer = new int[M];
+		int nodeCount = 0;
+		for(int i = 1; i < N+1; i++) {
+			node[i] = true;
+			answer[nodeCount++] = i;
+			search(node, answer, M, nodeCount);
+			node[i] = false;
+			nodeCount--;
+		}
+		System.out.println(sb);
+	}
+	
+	public static void search(boolean[] node, int[] answer, int M, int nodeCount) {
+		if(nodeCount==M) {
+			for(int i = 0; i<M; i++) {
+				sb.append(answer[i]).append(" ");
+			}
+			sb.append("\n");
+			return;
+		}
+		for(int i = 1; i < node.length; i++) {
+			if(!node[i]) {
+				node[i] = true;
+				answer[nodeCount++] = i; 
+				search(node, answer, M, nodeCount);
+				node[i] = false;
+				nodeCount--;
+			}
+		}
+	}
+	
+}
+*/
+//<최종 풀이>
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+	static int N, M;
+	static boolean[] check;
+	static char[] answer;
+	
+	static StringBuilder sb = new StringBuilder();
+	
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+		
+		check = new boolean[N + 1]; //1~N 까지의 수를 담을 수열 인덱스 번호를 수로 이용하기 때문에 +1;
+		answer = new char[2 * M];
+		
+		for(int i = 0; i < M - 1; i++)
+			answer[2 * i + 1] = ' ';//수가 들어갈 인덱스와 인덱스 사이에 공백
+		
+		answer[2 * M - 1] = '\n';//마지막 인덱스 개행
+		
+		dfs(0);
+		
+		System.out.println(sb);
+	}
+	
+	static void dfs(int m) {
+		if(m == M) {
+			sb.append(answer);
+			return;
+		}
+		
+		for(int i = 1; i <= N; i++) {
+			if(!check[i]) {
+				check[i] = true;
+				answer[2 * m] = (char)(i + '0'); 
+						
+				dfs(m + 1);
+				
+				check[i] = false;
+			}
+		}
+	}
+}
