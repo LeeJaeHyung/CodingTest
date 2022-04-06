@@ -16,3 +16,55 @@
 
       수열은 사전 순으로 증가하는 순서로 출력해야 한다.
 */
+
+/*
+      풀이 : 풀이 방식을 이전에 풀었던 No.156499 N과 M (1)문제에 풀이 방식을 응용하여 푸는것에 집중하여 풀어 보았습니다.
+             이전 풀이 방식에서 siVisited는 이번 문제에선 필요가 없는 수였습니다.
+             입력을 값을 가지고 문제를 푸는 방식에서 역으로 반례의 답을 가지고 풀이 방식을 유추해 나갔습니다.
+             그과정에서 입력값의 0번 인덱스는 항상 N+1-M까지의 수 만 들어갈 수 다는 것을 확인하여 idx == 0 일때의 for문에서의 반복 횟수를 줄일수 있었습니다.
+             
+
+*/
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+class Main {
+
+	static int N, M;
+	static int[] answer;
+	static StringBuilder sb = new StringBuilder();
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+		answer = new int[M];
+		solution(0, 0);
+
+		System.out.println(sb);
+	}
+
+	public static void solution(int idx, int before) {
+		if (idx == M) {
+			for (int i = 0; i < idx; i++) {
+				sb.append(answer[i]).append(" ");
+			}
+			sb.append("\n");
+			return;// 출력
+		}
+		if (idx == 0) {// 처음 들어왔을때
+			for (int i = 1; i <= N + 1 - M; i++) {
+				answer[idx] = i;
+				solution(idx + 1, i);
+			}
+		} else {
+			for (int i = before + 1; i < N + 1; i++) {
+				answer[idx] = i;
+				solution(idx + 1, i);
+			}
+		}
+
+	}
+}
