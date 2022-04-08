@@ -1,0 +1,110 @@
+/*
+    N-Queen 성공
+
+    시간 제한	메모리 제한	제출	정답	맞힌 사람	정답 비율
+    10 초	128 MB	62684	30946	20287	48.706%
+    문제
+    N-Queen 문제는 크기가 N × N인 체스판 위에 퀸 N개를 서로 공격할 수 없게 놓는 문제이다.
+
+    N이 주어졌을 때, 퀸을 놓는 방법의 수를 구하는 프로그램을 작성하시오.
+
+    입력
+    첫째 줄에 N이 주어진다. (1 ≤ N < 15)
+
+    출력
+    첫째 줄에 퀸 N개를 서로 공격할 수 없게 놓는 경우의 수를 출력한다.
+*/
+
+/*
+  풀이: N-Queen의 규칙을 찾는것에 시간이 오래 걸렸습니다.
+       <시도한 방법>
+       1. boolean[][] board의 형태로 체스 판을 만들어 놓고 방문이 가능할경우 fasle 불가능 시 ture 처리 하여 푸는 방법
+          -> 해당 board[n][i]의 값이 false일경우 해당이후 아래에 오는 것들을 true처리 해주게 되는데
+             위의 방식을 통해서 재귀 호출을 마치고 false처리를 해주는경우에 전체를 false -> 이후에 0~n-1 의 board를 모두 true처리 해줘야 함으로 상당히 
+             비효율적입니다  따라서 두개의 board를 가지고 처리하는 방식이 있는데 해당 방식도 비효율적입니다.
+       2. 해당 N-Queen의 규칙을 youtube를 통해 숙지 할수 있었습니다.
+        2-1. Queen의 이동경로는 대각선 좌표상에서 i+n, i-n의 기울기를 가지는 모든 점들은 위치할수 없고 인덱스 [0~N][i] 에도 위치할 수 없음으로 
+             같은 열에는 1개의 Queen만 존재가능 
+        2-2. Queen은 N개 존재 해야 함으로 각 행마다 1개의 Queen이 존재 해야만 한다
+        위의 규칙을 통해
+        boolean[] isVisited = boolean[N];
+        isVisited[i]를 통해 해당열이 중복되는지 확인후 
+        Set<Integer> iPN = new HashSet<Integer>();
+        Set<Integer> iMN = new HashSet<Integer>();
+        
+        iPN.contains(i+n);,iMN.contains(i-n);
+        이모두 false일때
+        set에 각각 iPN의 기울기와 iMN의 기울기들을 담아두고 해당
+        다음번 재귀함수 호출 위의 재귀함수가 종료 되면 다시
+        iPN.remove(i+n);,iMN.remove(i-n);을통해 set에 들어있는 값을 지움
+        
+        위의 방식을 통해 정답을 도출하느것에 성공 하였지만 Set이 메모리를 많이 사용하는지 메모리 초과 발생
+        따라서 해당 Set들을 int[]로 이용 
+        
+        public static boolean check(int p , int m, int idx) {
+          for(int i = 0; i<idx; i++) {
+            if(iPN[i] == p)return false;
+            if(iMN[i] == m)return false;
+          }
+          return true;
+        }
+       check메소드를 정의 하여 set의 contains()역활을 하도록 하였습니다
+        
+        
+        
+        
+             
+*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
+
+class Main {
+
+	static int N;
+	static boolean[] isVisited;
+	static int[] iPN;
+	static int[] iMN;
+	static int answer = 0;
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		isVisited = new boolean[N];
+		iPN = new int[N];
+		iMN = new int[N];
+		nQueen(0);
+		System.out.println(answer);
+	}
+
+	public static void nQueen(int n) {
+		if (n == N) {
+			answer++;
+			return;
+		}
+		for (int i = 0; i < N; i++) {
+			if (!isVisited[i]) {
+				int p = i+n;
+				int m = i-n;
+				if(check(p, m, n)) {
+					isVisited[i] = true;
+					iPN[n] = p;
+					iMN[n] = m;
+					nQueen(n+1);
+					isVisited[i] = false;
+				}
+			}
+		}
+	}
+	
+	public static boolean check(int p , int m, int idx) {
+		for(int i = 0; i<idx; i++) {
+			if(iPN[i] == p)return false;
+			if(iMN[i] == m)return false;
+		}
+		return true;
+	}
+
+}
