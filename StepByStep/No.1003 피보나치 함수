@@ -1,0 +1,110 @@
+/*
+피보나치 함수 성공
+ 
+시간 제한	메모리 제한	제출	정답	맞힌 사람	정답 비율
+0.25 초 (추가 시간 없음)	128 MB	155224	44239	34490	31.303%
+문제
+다음 소스는 N번째 피보나치 수를 구하는 C++ 함수이다.
+
+int fibonacci(int n) {
+    if (n == 0) {
+        printf("0");
+        return 0;
+    } else if (n == 1) {
+        printf("1");
+        return 1;
+    } else {
+        return fibonacci(n‐1) + fibonacci(n‐2);
+    }
+}
+fibonacci(3)을 호출하면 다음과 같은 일이 일어난다.
+
+fibonacci(3)은 fibonacci(2)와 fibonacci(1) (첫 번째 호출)을 호출한다.
+fibonacci(2)는 fibonacci(1) (두 번째 호출)과 fibonacci(0)을 호출한다.
+두 번째 호출한 fibonacci(1)은 1을 출력하고 1을 리턴한다.
+fibonacci(0)은 0을 출력하고, 0을 리턴한다.
+fibonacci(2)는 fibonacci(1)과 fibonacci(0)의 결과를 얻고, 1을 리턴한다.
+첫 번째 호출한 fibonacci(1)은 1을 출력하고, 1을 리턴한다.
+fibonacci(3)은 fibonacci(2)와 fibonacci(1)의 결과를 얻고, 2를 리턴한다.
+1은 2번 출력되고, 0은 1번 출력된다. N이 주어졌을 때, fibonacci(N)을 호출했을 때, 0과 1이 각각 몇 번 출력되는지 구하는 프로그램을 작성하시오.
+
+입력
+첫째 줄에 테스트 케이스의 개수 T가 주어진다.
+
+각 테스트 케이스는 한 줄로 이루어져 있고, N이 주어진다. N은 40보다 작거나 같은 자연수 또는 0이다.
+
+출력
+각 테스트 케이스마다 0이 출력되는 횟수와 1이 출력되는 횟수를 공백으로 구분해서 출력한다.
+
+*/
+/*
+
+풀이 : DP에 대해 공부하였습니다.
+      DP란 problem들을 더작은 subProblem들을 통해 풀수있을 때 사용이 가능하며
+      subProblem들의 soultion들이 더큰 problem들을 풀수있을때 메모제이션 방식을 통해 
+      연산 횟수를 효과적으로 줄일 수있습니다.
+      시간복잡도는 O(2^n)의 시간 복잡도를 가집니다
+      bottomUp 방식을 이용하여 풀었습니다 <<== 일반적으로 재귀호출을 통해 진행
+      TopDown 방식을 통해서도 풀수있지만 호출횟수가 많아질 경우 callStackOverFlow가 발생할 수 있습니다. <<== 반복문을 통해 해결
+      
+      1.입력 받은 값중 가장 큰 값을 int max에 담음
+      
+      2.subProblem의 값들을 메모이제이션 subProblem == fibonacci(n-1) 과 fibonacci(n-2)의 답들
+        answer[n][0]은 fibonacci(n)의 fibonacci(0)호출 횟수
+        answer[n][1]은 fibonacci(n)의 fibonacci(1)호출 횟수
+        fibonacci(max)의 호출을 하기전 answer[0]과 answer[1]을 초기화
+        answer[0] = new int[] { 1, 0 };
+		    answer[1] = new int[] { 0, 1 };
+        
+      3.문제의 코드상에서 fibonacci(n)들의 답들을 answer에 쌓는 fibonacci(max)호출
+      4.for (int i = 2; i <= max; i++) {
+          answer[i][0] = answer[i - 1][0] + answer[i - 2][0];
+          answer[i][1] = answer[i - 1][1] + answer[i - 2][1];
+        }
+       위의 반복문을 통해 answer[max]까지의 값을 쌓고
+      5.입력을 담아둔 배열을 통해 StringBuilder에 값을 쌓아 출력하여 문제를 풀었습니다.
+        
+
+*/
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+class Main {
+
+	static int[][] answer;
+	static int max;
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
+		int T = Integer.parseInt(br.readLine());
+		int[] target = new int[T];
+		max = 0;
+		for (int i = 0; i < T; i++) {
+			int now = Integer.parseInt(br.readLine());
+			target[i] = now;
+			if (max < now) {
+				max = now;
+			}
+		}
+
+		answer = new int[max + 1][2];
+
+		answer[0] = new int[] { 1, 0 };
+		answer[1] = new int[] { 0, 1 };
+
+		fibonacci(max);
+
+		for (int input : target) {
+			sb.append(answer[input][0] + " " + answer[input][1] + "\n");
+		}
+		System.out.println(sb);
+	}
+
+	public static void fibonacci(int max) {
+		for (int i = 2; i <= max; i++) {
+			answer[i][0] = answer[i - 1][0] + answer[i - 2][0];
+			answer[i][1] = answer[i - 1][1] + answer[i - 2][1];
+		}
+	}
+}
