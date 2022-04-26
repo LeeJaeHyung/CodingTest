@@ -1,0 +1,127 @@
+/*
+    포도주 시식 성공
+
+    시간 제한	메모리 제한	제출	정답	맞힌 사람	정답 비율
+    2 초	128 MB	96216	32728	23518	32.742%
+    문제
+    효주는 포도주 시식회에 갔다. 그 곳에 갔더니, 테이블 위에 다양한 포도주가 들어있는 포도주 잔이 일렬로 놓여 있었다. 효주는 포도주 시식을 하려고 하는데, 여기에는 다음과 같은 두 가지 규칙이 있다.
+
+    포도주 잔을 선택하면 그 잔에 들어있는 포도주는 모두 마셔야 하고, 마신 후에는 원래 위치에 다시 놓아야 한다.
+    연속으로 놓여 있는 3잔을 모두 마실 수는 없다.
+    효주는 될 수 있는 대로 많은 양의 포도주를 맛보기 위해서 어떤 포도주 잔을 선택해야 할지 고민하고 있다. 1부터 n까지의 번호가 붙어 있는 n개의 포도주 잔이 순서대로 테이블 위에 놓여 있고, 각 포도주 잔에 들어있는 포도주의 양이 주어졌을 때, 효주를 도와 가장 많은 양의 포도주를 마실 수 있도록 하는 프로그램을 작성하시오. 
+
+    예를 들어 6개의 포도주 잔이 있고, 각각의 잔에 순서대로 6, 10, 13, 9, 8, 1 만큼의 포도주가 들어 있을 때, 첫 번째, 두 번째, 네 번째, 다섯 번째 포도주 잔을 선택하면 총 포도주 양이 33으로 최대로 마실 수 있다.
+
+    입력
+    첫째 줄에 포도주 잔의 개수 n이 주어진다. (1 ≤ n ≤ 10,000) 둘째 줄부터 n+1번째 줄까지 포도주 잔에 들어있는 포도주의 양이 순서대로 주어진다. 포도주의 양은 1,000 이하의 음이 아닌 정수이다.
+
+    출력
+    첫째 줄에 최대로 마실 수 있는 포도주의 양을 출력한다.
+*/
+/*
+    풀이 :  첫번째 점화식 => dp[idx][0] = input[idx] + dp[idx-1][1];
+                           dp[idx][1] = input[idx] + Math.max(dp[idx-2][0], dp[idx-2][1]);
+                           
+                           <유도 과정>
+                           dp[idx]의 상태가 되려면 dp[idx-1]에서 온 경우 와 dp[idx-2]에서 온 경우
+                           두가지가 존재 하지만 제약 조건으로 세잔 이상 연속으로 마실 수 없음으로 연속으로 마실수 있는것은 두잔 
+                           따라서 dp[idx-1]에서는 dp[idx-2]에서 dp[idx-1]로 올라온 값이 들어올 수 있지만 
+                           그값은 dp[idx]의 상태로 올 수는 없다.
+                           따라서 2차원 배열로 배열을 선언하여 [N][2]의 크기로 이용
+                           dp[idx][0] => dp[idx-1][1]로 선언하여 두 칸 올라 dp[idx-1]에 도착한 값을 저장 BottomUp방식이기 때문에
+                           dp[idx][1]을 정의 함에 따라 dp[idx-1][1]도 정의됨
+                           
+                           dp[idx][1] => 두 칸을 올라 dp[idx]에 도착한 경우로 정의 하고 해당 경우에서는 dp[idx-2][0] 과 dp[idx-2][1] 두경우 모두 연속적으로 2칸을 오른 경우는 없음
+                           dp[idx-2][0] dp[idx-2][1]둘중 큰값을 대입 Math.max()를 이용하여 대입
+                          
+                           <해당 점화식의 문제점>
+                           1. 출력에서 Math.max(dp[N-1][0], dp[N-1][1])을 하도록 설계 하였지만 이렇게 되면 만약 무조건 마지막 잔을 마시게 되는 경우가 됨
+                           2. 해당 점화식에서는 무조건 건너 뛰는것은 2칸씩 건너뛰게 됨으로 3칸이상 건너뛰어 도달 하는 경우가 최대값인 경우를 처리하지 못함
+                           
+                           <해당 점화식의 문제 해결방안>
+                           1. 점화식 도입전 int max를 선언 int max = input[0] + input[1];
+                              해당 max를 이용하여 점화식을 도는 과정에서 생선된 dp[idx][0] 과 dp[idx][1]과  max 중 큰 값을 max 에 대입함으로 모든 경우에서 가장 큰 값을 찾음으로 해결
+                           2. 두칸 이상 건너뛰려면 무조건 dp[idx-2]이전의 큰 값들 중에서 건너뛰면 해당 문제가 해결이 됩니다.
+                              따라서 max를 새로운 배열에 저장해두고 idx-2 의 인덱스의 경우에서 max값에서 건너 뛰어 올라오면 됩니다.
+                              dp = new int[N][2];에서 [N][3]으로 2차원 배열의 크기를 하나 늘려 해당 배열에 max 값들을 저장하여 idx-2의 max값을 가져옴
+                           
+                           <수정 된 점화식>
+                           		int max = dp[1][2];
+                              // 점화식 구성
+                              for (int idx = 2; idx < N; idx++) {
+                                dp[idx][0] = input[idx] + dp[idx - 1][1];
+                                dp[idx][1] = input[idx] + dp[idx-2][2];
+                                dp[idx][2] = max = max(max, dp[idx][0], dp[idx][1]);
+                              }
+                            <위의 초기값>
+                              dp[0][2] = dp[0][0] = dp[0][1] = input[0]; //dp[0]의 배열은 모두 input[0]의 값을 가짐
+                              dp[1][2] = dp[1][0] = input[1] + input[0]; //1번째 잔과 2번째 잔을 마시는 경우
+                              dp[1][1] = input[1]; // 2번째 잔부터 마시는 경우
+                            
+                            또한 Math.max를 두번 호출하는 거 같아 max(int a, int b, int c)를 새로 만들어 이용하였습니다.
+*/
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+class Main {
+
+	static int N;
+	static int[] input;
+	static int[][] dp;
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		input = new int[N];
+		for (int i = 0; i < N; i++) {
+			input[i] = Integer.parseInt(br.readLine());
+		}
+		if (N < 3) {
+			int answer = 0;
+			for(int i = 0; i < N; i++) {
+				answer += input[i];
+			}
+			System.out.println(answer);
+		} else {
+			dp = new int[N][3];
+			solution();
+		}
+	}
+
+	public static void solution() {
+
+		// 초기값
+		dp[0][2] = dp[0][0] = dp[0][1] = input[0];
+		dp[1][2] = dp[1][0] = input[1] + input[0];
+		dp[1][1] = input[1];
+		int max = dp[1][2];
+		// 점화식 구성
+		for (int idx = 2; idx < N; idx++) {
+			dp[idx][0] = input[idx] + dp[idx - 1][1];
+			dp[idx][1] = input[idx] + dp[idx-2][2];
+			dp[idx][2] = max = max(max, dp[idx][0], dp[idx][1]);
+		}
+
+		System.out.println(max);
+
+	}
+	
+	public static int max(int a, int b, int c) {
+		int max = 0;
+		if (a < b) {
+			if (b < c) {
+				max = c;
+			} else {
+				max = b;
+			}
+		} else {
+			if (a < c) {
+				max = c;
+			} else {
+				max = a;
+			}
+		}
+
+		return max;
+	}
+}
