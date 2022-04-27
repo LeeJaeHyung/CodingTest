@@ -1,0 +1,97 @@
+/*
+      가장 긴 증가하는 부분 수열 성공
+
+      시간 제한	메모리 제한	제출	정답	맞힌 사람	정답 비율
+      1 초	256 MB	101626	39919	26155	37.262%
+      문제
+      수열 A가 주어졌을 때, 가장 긴 증가하는 부분 수열을 구하는 프로그램을 작성하시오.
+
+      예를 들어, 수열 A = {10, 20, 10, 30, 20, 50} 인 경우에 가장 긴 증가하는 부분 수열은 A = {10, 20, 10, 30, 20, 50} 이고, 길이는 4이다.
+
+      입력
+      첫째 줄에 수열 A의 크기 N (1 ≤ N ≤ 1,000)이 주어진다.
+
+      둘째 줄에는 수열 A를 이루고 있는 Ai가 주어진다. (1 ≤ Ai ≤ 1,000)
+
+      출력
+      첫째 줄에 수열 A의 가장 긴 증가하는 부분 수열의 길이를 출력한다.
+*/
+/*
+     풀이 : 푸는과정에서 점화식을 유도하는 방식이 정말 어려웠습니다. 시간도 4시간 정도 걸린거 같습니다.
+            임의의 수를 대입하여 가장긴 부분수열을 찾는법을 필기하여 직접 여러가지 과정을 풀어 보고
+            모든 과정에서 공통적으로 적용되는 부분을 찾는것에 중점을 두었습니다.
+            처음에는 하나의 인덱스에 접근하여 해당 인덱스 보다 큰 수를 카운트하여 담는 dp 테이블을 이용하였습니다.
+            하지만 그렇게 될경우 정답과는 전혀 다른 방향으로 진행되어 방식을 다시 생각해 보았습니다.
+            
+            N의 상태를 유도하는 과정을 찾는것이 점화식의 핵심이라고 생각합니다.
+            
+            <점화식 유도 과정>
+            손으로 여러 과정들을 풀다 보니 해당수의 최고의 경우는 자신보다 작은 값들 중에서 자기 자신보다 작은 값들을 중 가장 큰 수가 들어오는 것이 되는 방식임을 찾았습니다.
+            따라서 이방식에 카운트를 도입하는 dp테이블을 만들어 푸는 선택을 하였습니다.
+            
+            초기값  ==> dp[0] = 1;
+            
+            점화식  ==> 
+            	for(int i = 1; i < N; i++) {
+                int max = 0;
+                for(int j = i-1; j>=0; j--) {
+                  if(input[i]>input[j]) {
+                    max = Math.max(max, dp[j]);
+                  }
+                }
+                dp[i] = max+1;
+              }
+            
+
+*/
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+class Main {
+
+	static int[] input;
+	static int[] dp;
+	static int N;
+
+	public static void main(String[] args) throws Exception {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		if(N==1) {
+			br.readLine();
+			System.out.println(1);
+		}else {
+			input = new int[N];
+			dp = new int[N];
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			for (int i = 0; i < N; i++) {
+				input[i] = Integer.parseInt(st.nextToken());
+			}
+			solution();
+		}
+
+	}
+
+	public static void solution() {
+		//dp[N] => input[0~N-1] 중에 input[N] 보다 작은 인덱스에 모두 접근하여
+		//해당 인덱스 번호의 dp테이블에 접근 가장큰 값을 찾아 
+		//dp[N]에 대입한다
+		int answer = 0;
+		//초기값 = > dp[0] => 1
+		dp[0] = 1;
+		for(int i = 1; i < N; i++) {
+			int max = 0;
+			for(int j = i-1; j>=0; j--) {
+				if(input[i]>input[j]) {
+					max = Math.max(max, dp[j]);
+				}
+			}
+			dp[i] = max+1;
+			answer = Math.max(answer, max+1);
+		}
+		System.out.println(answer);
+		
+	}
+
+}
