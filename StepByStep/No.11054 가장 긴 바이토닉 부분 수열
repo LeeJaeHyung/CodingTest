@@ -1,0 +1,112 @@
+/*
+가장 긴 바이토닉 부분 수열 성공
+ 
+시간 제한	메모리 제한	제출	정답	맞힌 사람	정답 비율
+1 초	256 MB	33917	17246	13498	50.786%
+문제
+수열 S가 어떤 수 Sk를 기준으로 S1 < S2 < ... Sk-1 < Sk > Sk+1 > ... SN-1 > SN을 만족한다면, 그 수열을 바이토닉 수열이라고 한다.
+
+예를 들어, {10, 20, 30, 25, 20}과 {10, 20, 30, 40}, {50, 40, 25, 10} 은 바이토닉 수열이지만,  {1, 2, 3, 2, 1, 2, 3, 2, 1}과 {10, 20, 30, 40, 20, 30} 은 바이토닉 수열이 아니다.
+
+수열 A가 주어졌을 때, 그 수열의 부분 수열 중 바이토닉 수열이면서 가장 긴 수열의 길이를 구하는 프로그램을 작성하시오.
+
+입력
+첫째 줄에 수열 A의 크기 N이 주어지고, 둘째 줄에는 수열 A를 이루고 있는 Ai가 주어진다. (1 ≤ N ≤ 1,000, 1 ≤ Ai ≤ 1,000)
+
+출력
+첫째 줄에 수열 A의 부분 수열 중에서 가장 긴 바이토닉 수열의 길이를 출력한다.
+*/
+
+/*
+    풀이 : 증가 부분 수열의 길이 찾고  감소 부분 수열의 길이를 찾아 각각 dp테이블에 저장
+           따라서 두배열을 더하고 -1 하면 바이토닉 부분 수열의 길이를 알수 있다.
+           그중에서 가장 긴 바이토닉을 찾아 출력 하였습니다.
+           이전에 가장 긴 증가 부분 수열을 찾는 문제를 푼 상태여서 쉽게 풀수있었습니다.
+           
+           증가 부분 수열을 찾는 식은 
+           dp[N][0] = input[0~N-1] 까지의 인풋중 input[N] 보다 작은 수들의 인덱스를 가지고 dp[인덱스]에 접근 가장큰 값을 찾아서 +1을하여 대입
+           
+           감소 부분 수열을 찾는 방법은 두가지
+           1.입력과 입력의 인덱스를 반전 시킨 배열 두가지를 가지고 한번에 증가수열을 찾는방식
+              dp[N][0] = 증가 부분 수열
+              dp[N][1] = 감소 부분 수열의 반전된 값
+              따라서 for문을 돌며 dp[i][0]과dp[N-1-i][1]-1을 더하여 정답을 유추
+              for(int i = 0; i<N; i++) {
+                answer = Math.max(answer, dp[i][0]+dp[N-1-i][1]-1);
+              }
+           
+             
+           2.입력을 받고 증가 부분 수열의 수를 카운트 하는 for문을 돌고 가장 큰값을 찾아 dp[N][0]과 dp[N][2] +1 하여 저장
+             for문을 한번더 돌아 뒤에서 부터 감소 부분 수열을 카운트 하고 dp[N][1]에 +1 하여 대입 dp[N][2] += dp[N][1]-1
+              하여 해당 수들중 가장 큰값을 찾아 출력 하면 된다
+             
+           위의 두방식 모두 비슷한 속도를 가집니다.
+           
+           
+    
+           
+*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+class Main {
+
+	static int[] input;
+	static int[] reverse;
+	static int[][] dp;
+	static int N;
+
+	public static void main(String[] args) throws Exception {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		if(N==1) {
+			br.readLine();
+			System.out.println(1);
+		}else {
+			input = new int[N];
+			reverse = new int[N];
+			dp = new int[N][2];
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			for (int i = 0; i < N; i++) {
+				int number = Integer.parseInt(st.nextToken());
+				input[i] = number;
+				reverse[N-1-i] = number;// input의 배열의 인덱스를 반전하여 저장
+			}
+			solution();
+		}
+
+	}
+
+	public static void solution() {
+		//dp[N] => input[0~N-1] 중에 input[N] 보다 작은 인덱스에 모두 접근하여
+		//해당 인덱스 번호의 dp테이블에 접근 가장큰 값을 찾아 
+		//dp[N]에 대입한다
+		int answer = 0;
+		//초기값 = > dp[0] => 1
+		dp[0][0] = dp[0][1] = 1;
+		
+		for(int i = 1; i < N; i++) {//증가 수열을 찾는 식
+			int maxI = 0;
+			int maxR = 0;
+			for(int j = i-1; j>=0; j--) {
+				if(input[i]>input[j]) {
+					maxI = Math.max(maxI, dp[j][0]);
+				}
+				if(reverse[i]>reverse[j]) {
+					maxR = Math.max(maxR, dp[j][1]);
+				}
+			}
+			dp[i][0] = maxI+1;
+			dp[i][1] = maxR+1;
+		}
+		
+		for(int i = 0; i<N; i++) {
+			answer = Math.max(answer, dp[i][0]+dp[N-1-i][1]-1);
+		}
+		System.out.println(answer);
+	}
+
+}
