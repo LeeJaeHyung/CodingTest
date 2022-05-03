@@ -1,0 +1,63 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+class Main {
+	
+	static char[] a, b;
+	static int[][] dp;
+	static boolean[][] check;
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		a = br.readLine().toCharArray();
+		b = br.readLine().toCharArray();
+		dp = new int[a.length][b.length];
+		check = new boolean[a.length][b.length];
+		System.out.println(lcs(a.length-1, b.length-1));
+		
+	
+	}
+	public static int lcs(int i, int j) {
+		if(i==-1||j==-1) {// 둘중 하나로 길이가 0이면 return
+			return 0;
+		}
+		int aB = 0;
+		int bB = 0;
+		int aBbB = 0;
+		
+		if(i>0 && j>0) {
+			if(check[i][j]) {
+				return dp[i][j];
+			}else {
+				if(a[i]==b[j]) {
+					if(check[i-1][j-1]) {
+						aBbB = dp[i-1][j-1]+1;
+					}else {
+						aBbB = lcs(i-1, j-1)+1;
+					}
+				}else {
+					if(check[i-1][j]) {
+						aB = dp[i-1][j];
+					}else {
+						aB = lcs(i-1, j);
+					}
+					if(check[i][j-1]) {
+						bB = dp[i][j-1];
+					}else {
+						bB = lcs(i, j-1);
+					}
+				}
+			}
+		}else {
+			if(i>=0||j>=0) {
+				if(a[i]==b[j]) {
+					aBbB = lcs(i-1, j-1)+1;
+				}
+			}
+			aB = lcs(i-1, j);
+			bB = lcs(i, j-1);
+		}
+		check[i][j] = true;
+		return dp[i][j] = Math.max(Math.max(aB, bB),aBbB);
+		
+	}
+}
