@@ -1,0 +1,67 @@
+/*
+    연속합 성공
+
+    시간 제한	메모리 제한	제출	정답	맞힌 사람	정답 비율
+    1 초 (추가 시간 없음)	128 MB	100106	34630	24106	33.340%
+    문제
+    n개의 정수로 이루어진 임의의 수열이 주어진다. 우리는 이 중 연속된 몇 개의 수를 선택해서 구할 수 있는 합 중 가장 큰 합을 구하려고 한다. 단, 수는 한 개 이상 선택해야 한다.
+
+    예를 들어서 10, -4, 3, 1, 5, 6, -35, 12, 21, -1 이라는 수열이 주어졌다고 하자. 여기서 정답은 12+21인 33이 정답이 된다.
+
+    입력
+    첫째 줄에 정수 n(1 ≤ n ≤ 100,000)이 주어지고 둘째 줄에는 n개의 정수로 이루어진 수열이 주어진다. 수는 -1,000보다 크거나 같고, 1,000보다 작거나 같은 정수이다.
+
+    출력
+    첫째 줄에 답을 출력한다.
+*/
+/*
+   풀이 : dp[n]의 상태는 dp[n-1]+input[n]과 input[n]둘중 큰값을 가지는 상태가 제일 큰값입니다.
+         이번문제는 상대적으로 이전 문제들 2565번 전깃줄, 9251번 LCS에 비해 상대적으로 쉬워서 점화식을 연상하기에 쉬웠습니다.
+         직접 풀어 본것이 아니라 역으로 dp[n]이 최선이 되는 경우를 떠올려 점화식을 구하였습니다.
+         따라서 점화식은 아래와 같이 구성됩니다.
+          if (dp[i - 1] + input[i] > input[i]) {
+            dp[i] = dp[i - 1] + input[i];
+          } else {
+            dp[i] = input[i];
+          }
+*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+class Main {
+
+	static int n;
+	static int[] input, dp;
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		n = Integer.parseInt(br.readLine());
+		input = new int[n];
+		dp = new int[n];
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < n; i++) {
+			input[i] = Integer.parseInt(st.nextToken());
+		}
+		dp();
+	}
+
+	public static void dp() {
+		// Bottom Up
+
+		// 초기값
+
+		int answer = dp[0] = input[0];
+		for (int i = 1; i < n; i++) {
+			if (dp[i - 1] + input[i] > input[i]) {
+				dp[i] = dp[i - 1] + input[i];
+			} else {
+				dp[i] = input[i];
+			}
+			answer = Math.max(answer, dp[i]);
+		}
+		System.out.println(answer);
+	}
+
+}
