@@ -71,7 +71,8 @@
 		재귀적 호출과정에서 발생하는 모든 경우의 탐색하는 과정을 메모이제이션을 통해 그냥 상수항의 속도 만큼 줄일수 있겠다 생각이 들었습니다.
 		따라서 이미 한번 방문 한적있는지 확인하는 boolean[][] check  = new boolean[a.length][b.length]을 생성 check[i][j] = ture 이미한번 방문하여 결과값을 dp[i][j]에 저장해둔 상태로 정의
 		재귀적으로 호출하는 과정에서 check를 확인 해당 값이 있다면 dp[i][j]를 return 없다면 재귀호출 하여 마지막에 dp테이블에 값을 저장하는 방식으로 문제를 풀었습니다.
-
+		
+		
 */
 
 import java.io.BufferedReader;
