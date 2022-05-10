@@ -1,0 +1,40 @@
+/*
+      약수의 합 2 성공
+
+      시간 제한	메모리 제한	제출	정답	맞힌 사람	정답 비율
+      0.5 초 (추가 시간 없음)	512 MB	4084	1692	1435	41.667%
+      문제
+      두 자연수 A와 B가 있을 때, A = BC를 만족하는 자연수 C를 A의 약수라고 한다. 예를 들어, 2의 약수는 1, 2가 있고, 24의 약수는 1, 2, 3, 4, 6, 8, 12, 24가 있다. 자연수 A의 약수의 합은 A의 모든 약수를 더한 값이고, f(A)로 표현한다. x보다 작거나 같은 모든 자연수 y의 f(y)값을 더한 값은 g(x)로 표현한다.
+
+      자연수 N이 주어졌을 때, g(N)을 구해보자.
+
+      입력
+      첫째 줄에 자연수 N(1 ≤ N ≤ 1,000,000)이 주어진다.
+
+      출력
+      첫째 줄에 g(N)를 출력한다.
+*/
+
+/*
+
+풀이 : 1~N 까지의 수에서 약수로 등장하는 X의 갯수는 (N/X)개가 존재 합니다.
+      따라서 (N/X)*X를 하게 되면 해당 수가 약수로 등장하는 갯수만큼 더해준것임으로
+      X를 1 ~ N까지 해준 값들을 모두 더해 주게 되면 1~N까지의 수의 모든 약수의 합이 됩니다.
+*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+class Main {
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
+		int N = Integer.parseInt(br.readLine());
+		long sum = 0;
+		for(int i = 1; i <= N; i++) {
+			sum += (N/i)*i;
+		}
+		System.out.println(sum);
+		
+	}
+}
