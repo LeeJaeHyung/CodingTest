@@ -1,0 +1,65 @@
+/*
+    <문제>
+    재귀함수가 뭔가요? 성공
+
+    시간 제한	메모리 제한	제출	정답	맞힌 사람	정답 비율
+    1 초	256 MB	19054	7453	6134	38.116%
+    문제
+    평소에 질문을 잘 받아주기로 유명한 중앙대학교의 JH 교수님은 학생들로부터 재귀함수가 무엇인지에 대하여 많은 질문을 받아왔다.
+
+    매번 질문을 잘 받아주셨던 JH 교수님이지만 그는 중앙대학교가 자신과 맞는가에 대한 고민을 항상 해왔다.
+
+    중앙대학교와 자신의 길이 맞지 않다고 생각한 JH 교수님은 결국 중앙대학교를 떠나기로 결정하였다.
+
+    떠나기 전까지도 제자들을 생각하셨던 JH 교수님은 재귀함수가 무엇인지 물어보는 학생들을 위한 작은 선물로 자동 응답 챗봇을 준비하기로 했다.
+
+    JH 교수님이 만들 챗봇의 응답을 출력하는 프로그램을 만들어보자.
+
+    입력
+    교수님이 출력을 원하는 재귀 횟수 N(1 ≤ N ≤ 50)이 주어진다.
+
+    출력
+    출력 예시를 보고 재귀 횟수에 따른 챗봇의 응답을 출력한다.
+*/
+
+/*
+  풀이 : 정수입력을 받아 해당 횟수 만큼 재귀호출을 진행하고 마지막과 시작점에 특정 문자열을 출력하는 문제입니다.
+         특정 문자열이 반복되고 재귀호출이 진행 될때 마다 추가적으로 "____"가 문자열 앞에 추가 되는 형식입니다
+         따라서 재귀호출되는 함수에 String 자료형의 변수를 매개변수로 받고 재귀호출이 진행 될때 마다 추가하여 주었습니다.
+         문제를 푸는 시간은 짧았지만 출력부분을 사이트에서 복사해서 붙여넣기 하여 작성하였습니다.
+          
+         <문제>
+         복사해 붙여넣기를 이용하였더니 \n의 앞에 \r이 자동 첨부 되었습니다.
+         위의 문제 때문에 출력형식이 일치하지 않는 다는 문제가 발생하였습니다.
+         앞으로는 문장의 복사 붙여넣기에서는 위와같은 실수를 하지 않도록 기억해야 겠습니다.
+*/
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+class Main {
+	
+	static int N;
+	static StringBuilder sb = new StringBuilder();
+	static String[] word = new String[] {"\"재귀함수가 뭔가요?\"\n", "\"잘 들어보게. 옛날옛날 한 산 꼭대기에 이세상 모든 지식을 통달한 선인이 있었어.\n","마을 사람들은 모두 그 선인에게 수많은 질문을 했고, 모두 지혜롭게 대답해 주었지.\n","그의 답은 대부분 옳았다고 하네. 그런데 어느 날, 그 선인에게 한 선비가 찾아와서 물었어.\"\n"};
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		sb.append("어느 한 컴퓨터공학과 학생이 유명한 교수님을 찾아가 물었다.\n");
+		recurtion(0, "");
+		System.out.print(sb);
+	}
+	
+	public static void recurtion(int status, String bar) {
+		if(N==status) {
+			sb.append(bar).append("\"재귀함수가 뭔가요?\"\n").append(bar).append("\"재귀함수는 자기 자신을 호출하는 함수라네\"\n").append(bar).append("라고 답변하였지.\n");
+			return;
+		}
+		for(String output : word) {
+			sb.append(bar).append(output);
+		}
+		recurtion(status+1,bar+"____");
+		sb.append(bar).append("라고 답변하였지.\n");
+	}
+}
