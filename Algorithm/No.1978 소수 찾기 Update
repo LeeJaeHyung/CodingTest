@@ -1,0 +1,104 @@
+/*
+문제
+주어진 수 N개 중에서 소수가 몇 개인지 찾아서 출력하는 프로그램을 작성하시오.
+
+입력
+첫 줄에 수의 개수 N이 주어진다. N은 100이하이다. 다음으로 N개의 수가 주어지는데 수는 1,000 이하의 자연수이다.
+
+출력
+주어진 수들 중 소수의 개수를 출력한다.
+*/
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+		int count = 0;
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		for(int i = 0; i<n; i++) {
+			int check = Integer.parseInt(st.nextToken());
+			Boolean x = true;
+			if(check == 1) {
+			}else {
+				for(int j = 2; j<check; j++) {
+					if(check%j==0) {
+						x = false;
+						break;
+					}
+				}
+				if(x) {
+					count++;
+				}				
+			}
+		}
+		System.out.println(count);
+	}
+}
+
+/*
+풀이 방법은 입력받은 수를 2부터 입력받은수보다 작은수까지 나누게 되는데 이중에 나머지가 0인것이 하나라도 존재하면 이것은 
+소수가 아님으로 break를 해준다. for문을 정상적으로 완료하고 나오면 true가 그대로 남아 있음으로 해당수는 소수고 해당 조건에서 카운트를 증가시켜 해당문제를 풀었습니다.
+*/
+
+
+------------------------------------------------------------------------- 다시 풀어보게 되었습니다. -------------------------------------------------------------------
+/*
+  UpdateVersion 
+  
+  <풀이> 에라토스테네스의 체를 이용하여 문제를 풀었습니다.
+  에라토스테네스의 체의 방식을 알고리즘에 적용하게 되면
+  2~N 까지의 수중 소수를 가려내는 방법은 2~sqrt(N)까지의 수의 배수들을 모두 지워 나가는것이다
+  자신의 배수는 지우되 자신이 지워져있는 경우는 건너뛴다
+  
+*/
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+class Main {
+	
+	static boolean[] pNum; 
+	
+	public static void main(String[] args) throws Exception {
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int N = Integer.parseInt(br.readLine());
+		int[] input = new int[N];
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int max = 0;
+		for(int i = 0; i < N; i++) {//입력 값들을 모아둔 후 최대값을 색출하여 max에 저장
+			input[i] = Integer.parseInt(st.nextToken());
+			if(max < input[i]) max = input[i];
+		}
+		
+		eratos(max);
+		int count = 0;
+		for(int i = 0; i < N; i++) {
+			if(!pNum[input[i]]) {
+				count++;
+			}
+		}
+		System.out.println(count);
+		
+	}
+	
+	public static void eratos(int max) {
+		
+		pNum = new boolean[max+1];
+		pNum[0] = pNum[1] = true;
+		int loopSize = (int)Math.sqrt(max);
+		for(int i = 2; i <= loopSize; i++) {
+			if(pNum[i])continue;
+			for(int j = i+i; j <= max; j+=i ) {
+				if(!pNum[j]) {
+					pNum[j] = true;
+				}
+			}
+		}		
+	}
+}
